@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "description": "Ease implementation of clusters in your projects.",
   "main": "clustish.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Come2Daddy/clustish.git"
+  },
   "jshintConfig": {
     "node": true,
     "esversion": 6
