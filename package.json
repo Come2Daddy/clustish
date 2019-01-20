@@ -1,6 +1,6 @@
 {
   "name": "clustish",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Ease implementation of clusters in your projects.",
   "main": "clustish.js",
   "repository": {
