@@ -1,0 +1,17 @@
+{
+  "name": "clustish",
+  "version": "0.1.0",
+  "description": "Ease implementation of clusters in your projects.",
+  "main": "clustish.js",
+  "jshintConfig": {
+    "node": true,
+    "esversion": 6
+  },
+  "keywords": [
+    "cluster",
+    "master",
+    "worker"
+  ],
+  "author": "ludovic landier <ludovic.landier@gmail.com>",
+  "license": "MIT"
+}
