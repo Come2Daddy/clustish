@@ -5,14 +5,17 @@ class commonLogic {
     constructor(options = {}) {
         this.isMaster = null;
         this.workerCount = 0;
+        this.pids = [];
         this.workers = [];
+        this.workersLogic = [];
         this.working = 0;
+        this.respawnable = [];
         this.assocEnv = {};
         this.status = {};
         this.hooks = [];
 
         this.options = Object.assign({
-            resume: false,
+            respawn: false,
             threadsPerCore: 1
         }, (options || {}));
 
@@ -55,16 +58,22 @@ class commonLogic {
         }
     }
 
-    _exit(pid, code, sig) {
+    _exit(worker, code, sig) {
         if (!sig && code === 0) {
             this._finish();
         } else {
-            if (this.options.resume === true) {
-                this.workers.push(this.assoc[pid]);
+            if (this.options.respawn === true) {
+                let pid = worker.process.pid;
+                let num = this.pids.indexOf(pid);
+                let env = this.assocEnv[pid];
+                this.workers[num] = this.assocEnv[pid];
                 delete this.assocEnv[pid];
-                this.workerCount--;
+                delete this.status[pid];
+                this.pids.splice(this.pids.indexOf(pid), 1);
 
-                this.spawn();
+                var that = this;
+
+                setImmediate(function () { that._respawn(num, env); });
             } else {
                 this._finish();
             }
@@ -73,6 +82,27 @@ class commonLogic {
 
     _ready() {
         this.readyFn.call(this);
+    }
+
+    _respawn(num, env) {
+        var that = this;
+        let fork = cluster.fork(env);
+        this.assocEnv[fork.process.pid] = env;
+        this.pids[num] = fork.process.pid;
+        
+        fork.on("online", function () {
+            that.status[fork.process.pid] = true;
+            
+            that.workersLogic[num].call(that, fork, num);
+        });
+        
+        fork.on("message", (message) => {
+            that._message(fork, message);
+        });
+        
+        fork.on("exit", (code, sign) => {
+            that._exit(fork, code, sign);
+        });
     }
 
     _finish() {
@@ -115,8 +145,8 @@ class commonLogic {
 }
 
 class masterLogic extends commonLogic {
-    constructor() {
-        super();
+    constructor(options) {
+        super(options);
 
         this.isMaster = true;
     }
@@ -166,6 +196,7 @@ class masterLogic extends commonLogic {
         if (typeof (logic) === "function") {
             let count = 0;
             for (let id in cluster.workers) {
+                this.workersLogic[count] = logic;
                 logic.call(this, cluster.workers[id], count);
                 count++;
             }
@@ -203,8 +234,9 @@ class masterLogic extends commonLogic {
     spawn() {
         for (let env of this.workers) {
             let fork = cluster.fork(env);
-            this.assocEnv[fork.pid] = env;
-            this.status[fork.pid] = false;
+            this.assocEnv[fork.process.pid] = env;
+            this.status[fork.process.pid] = false;
+            this.pids.push(fork.process.pid);
             this.workerCount++;
         }
 
@@ -233,8 +265,8 @@ class masterLogic extends commonLogic {
 }
 
 class workerLogic extends commonLogic {
-    constructor() {
-        super();
+    constructor(options) {
+        super(options);
 
         this.isMaster = false;
     }
@@ -270,11 +302,11 @@ class workerLogic extends commonLogic {
 }
 
 class clustish {
-    constructor() {
+    constructor(options) {
         if (cluster.isMaster) {
-            return new masterLogic();
+            return new masterLogic(options);
         } else {
-            return new workerLogic();
+            return new workerLogic(options);
         }
     }
 }

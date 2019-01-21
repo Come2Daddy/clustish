@@ -1,6 +1,9 @@
 # clustish
 
-The goal of clustish is to ease implementation of clusters (master/workers) in your projects.
+[![NPM version][npm-image]][npm-url]
+[![build status][travis-image]][travis-url]
+
+The goal of clustish is to ease implementation of clusters (master/workers) in your projects. You can parallelise tasks while keeping a hand over your workers through the master logic which can provide an stdin interface for example. Dead workers can be respawned automatically.
 
 ## Installation
 ```
@@ -12,9 +15,9 @@ yarn add clustish
 ```
 
 ## Usage
-```
+```javascript
 const clustish = require("clustish")({
-    resume: false, // Do not resume worker when it exits
+    respawn: false, // Do not respawn worker when it exits
     threadsPerCore: 2 // Number of threads per logical CPU
 });
 
@@ -33,7 +36,7 @@ clustish.messageHandler(function(msg) {
 
     this.ready(function() {
         // when all workers have been spawned
-        this.eachCluster(function(worker, index) {
+        this.workerLogic(function(worker, index) {
             // send each worker its task (could be anything)
             worker.send({"hookname": {"task": tasks[index]}});
         });
@@ -61,7 +64,7 @@ clustish.messageHandler(function(msg) {
 
 #### options
 When instanciate clustish you can pass an object as parameter as follow:
-* **resume**: *boolean* True to respawn a worker that exited.
+* **respawn**: *boolean* True to respawn a worker that exited.
 * **threadsPerCore**: *integer* Number of threads per core.
 
 #### `clustish.messageHandler(callback)`
@@ -79,12 +82,12 @@ Hook is triggered by sending a message either to master or workers as an object 
 
 
 in a worker logic:
-```
+```javascript
 process.send({"hookname": {"end": true, "lines": 200}})
 ```
 will trigger hook with spacename "hookname" and coresponding value `{"end": true, "lines": 200}}` as a parameter.
 
-```
+```javascript
 clustish.addHook("hookname", function(status) {
     if(status.end === true) {
         console.log(`Worker's done with ${status.lines} lines.`);
