@@ -1,7 +1,7 @@
 # clustish
 
-[![NPM version][npm-image]][npm-url]
-[![build status][travis-image]][travis-url]
+[![NPM version](https://badge.fury.io/js/clustish.svg)](//npmjs.com/package/clustish)
+[![Build Status](https://travis-ci.org/Come2Daddy/clustish.svg?branch=master)](https://travis-ci.org/Come2Daddy/clustish)
 
 The goal of clustish is to ease implementation of clusters (master/workers) in your projects. You can parallelise tasks while keeping a hand over your workers through the master logic which can provide an stdin interface for example. Dead workers can be respawned automatically.
 
