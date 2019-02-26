@@ -14,26 +14,23 @@ class commonLogic {
         this.status = {};
         this.hooks = [];
 
-        this.options = Object.assign({
-            respawn: false,
-            threadsPerCore: 1
-        }, (options || {}));
+        this.options = { respawn: false, threadsPerCore: 1, ...options};
 
         this.doneFn = function () { };
         this.readyFn = function () { };
         this.mh = function (message) { console.log("#", message); };
     }
 
-    _message(pid, message) {
-        this._hook(pid, message);
+    _message(worker, message) {
+        this._hook(worker, message);
     }
 
-    _hook(pid, message) {
+    _hook(worker, message) {
         if (typeof (message) === "object") {
             for (let hook in this.hooks) {
                 if ((this.hooks[hook].master === true && this.isMaster === true) || (this.hooks[hook].worker === true && this.isMaster === false)) {
                     if (message.hasOwnProperty(hook)) {
-                        this.hooks[hook].fn.call(this, message[hook]);
+                        this.hooks[hook].fn.call(this, message[hook], worker);
 
                         return true;
                     }

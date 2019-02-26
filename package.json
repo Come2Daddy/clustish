@@ -1,15 +1,11 @@
 {
   "name": "clustish",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Ease implementation of clusters in your projects, with the ability to respawn dead workers.",
   "main": "clustish.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/Come2Daddy/clustish.git"
-  },
-  "jshintConfig": {
-    "node": true,
-    "esversion": 6
   },
   "keywords": [
     "cluster",
