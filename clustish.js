@@ -14,7 +14,7 @@ class commonLogic {
         this.status = {};
         this.hooks = [];
 
-        this.options = { respawn: false, threadsPerCore: 1, ...options};
+        this.options = { respawn: false, multithreaded: true, ...options};
 
         this.doneFn = function () { };
         this.readyFn = function () { };
@@ -167,14 +167,11 @@ class masterLogic extends commonLogic {
     }
 
     cpus() {
-        return os.cpus().length;
+        return this.options.multithreaded === true ? (os.cpus().length / 2) : os.cpus().length;
     }
 
     threads() {
-        if (!Number.isInteger(this.options.threadsPerCore)) this.options.threadsPerCore = 1;
-        if (this.options.threadsPerCore < 1) this.options.threadsPerCore = 1;
-
-        return this.cpus() * this.options.threadsPerCore;
+        return this.cpus();
     }
 
     eachCPU(logic) {
@@ -189,7 +186,7 @@ class masterLogic extends commonLogic {
         return this;
     }
 
-    eachOf(logic, count) {
+    eachOf(count, logic) {
         this._each(logic, count);
 
         return this;

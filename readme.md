@@ -18,7 +18,7 @@ yarn add clustish
 ```javascript
 const clustish = require("clustish")({
     respawn: false, // Do not respawn worker when it exits
-    threadsPerCore: 2 // Number of threads per logical CPU
+    multithreaded: true // Do physical CPUs have multithread support
 });
 
 // Common logic should be here if needed
@@ -65,7 +65,7 @@ clustish.messageHandler(function(msg) {
 #### options
 When instanciate clustish you can pass an object as parameter as follow:
 * **respawn**: *boolean* True to respawn a worker that exited.
-* **threadsPerCore**: *integer* Number of threads per core.
+* **multithreaded**: *boolean* Number of threads per core.
 
 #### `clustish.messageHandler(callback)`
 Defines how messages between master and workers are handled, when not captured by hooks. Using parent property `isMaster` allows you to know which side is reciving.
@@ -105,16 +105,16 @@ Defines worker's logic.
 ### master
 
 #### `clustish.cpus()`
-Returns number of CPU cores as `integer`.
+Returns number of physical CPUs as `integer`, as defined by option `multithreaded`.
 
 #### `clustish.threads()`
-Returns total number of threads as `integer`, as defined by option `threadsPerCore`.
+Returns total number of logical CPUs as `integer`, as defined by option `multithreaded`.
 
 #### `clustish.eachCPU(callback)`
-Loops `callback` over logical CPU count.
+Loops `callback` over physical CPU count.
 
-#### `clustish.eachCluster(callback)`
-Loops `callback` over threads.
+#### `clustish.eachThread(callback)`
+Loops `callback` over logical CPU count.
 
 #### `clustish.eachOf(count, callback)`
 Loops `callback` over `count`.

@@ -1,6 +1,6 @@
 {
   "name": "clustish",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Ease implementation of clusters in your projects, with the ability to respawn dead workers.",
   "main": "clustish.js",
   "repository": {
