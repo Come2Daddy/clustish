@@ -189,6 +189,12 @@ class masterLogic extends commonLogic {
         return this;
     }
 
+    eachOf(logic, count) {
+        this._each(logic, count);
+
+        return this;
+    }
+
     each(logic) {
         if (typeof (logic) === "function") {
             let count = 0;

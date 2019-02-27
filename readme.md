@@ -116,7 +116,11 @@ Loops `callback` over logical CPU count.
 #### `clustish.eachCluster(callback)`
 Loops `callback` over threads.
 
-#### `clustish.each(callback, number)`
+#### `clustish.eachOf(count, callback)`
+Loops `callback` over `count`.
+* **count**: *integer* Loop count.
+
+#### `clustish.each(callback)`
 Loops `callback` over defined workers.
 
 #### `clustish.add(env)`
