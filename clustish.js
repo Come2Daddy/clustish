@@ -171,7 +171,7 @@ class masterLogic extends commonLogic {
     }
 
     threads() {
-        return this.cpus();
+        return os.cpus().length;
     }
 
     eachCPU(logic) {
